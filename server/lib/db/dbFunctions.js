@@ -1,6 +1,6 @@
-var dbInitialize = require('./dbInitialize');
-var client = dbInitialize.client;
+var client = require('./dbClient');
 
+var dbInitialize = require('./dbInitialize');
 dbInitialize.initializeComprehensively();
 
 // for passport.js

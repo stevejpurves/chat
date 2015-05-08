@@ -1,10 +1,6 @@
 var mysql      = require('mysql');
 var async = require('async');
-client = mysql.createConnection({
-    host     : 'localhost',
-    user     : 'root',
-    password : 'tangent90'
-});
+var client = require('./dbClient');
 
 function initializeComprehensively(){
     async.series([
@@ -71,17 +67,17 @@ function initializeComprehensively(){
             ];
             client.query('INSERT INTO `simpledb`.`users` (`userID`, `username`, `password`) VALUES ?', [userData], callback);
         },
-        function insert_messages(callback) {
-            var messageData = [
-                [1, 1, 2, 'hello from 1 to 2', '', '2015-05-01 12:27:06'],
-                [2, 1, 3, 'hello from 1 to 3', '', '2015-05-01 12:27:09'],
-                [3, 2, 1, 'hello from 2 to 1', '', '2015-05-01 12:27:07'],
-                [4, 2, 3, 'hello from 2 to 3', '', '2015-05-01 12:27:10'],
-                [5, 3, 1, 'hello from 3 to 1', '', '2015-05-01 12:27:08'],
-                [6, 3, 2, 'hello from 3 to 2', '', '2015-05-01 12:27:11']
-            ];
-            client.query('INSERT INTO `simpledb`.`messages` (`messagesID`, `from`, `to`, `content`, `delivery_status`, `date`) VALUES ?', [messageData] ,callback);
-        }
+        // function insert_messages(callback) {
+        //     var messageData = [
+        //         [1, 1, 2, 'hello from 1 to 2', '', '2015-05-01 12:27:06'],
+        //         [2, 1, 3, 'hello from 1 to 3', '', '2015-05-01 12:27:09'],
+        //         [3, 2, 1, 'hello from 2 to 1', '', '2015-05-01 12:27:07'],
+        //         [4, 2, 3, 'hello from 2 to 3', '', '2015-05-01 12:27:10'],
+        //         [5, 3, 1, 'hello from 3 to 1', '', '2015-05-01 12:27:08'],
+        //         [6, 3, 2, 'hello from 3 to 2', '', '2015-05-01 12:27:11']
+        //     ];
+        //     client.query('INSERT INTO `simpledb`.`messages` (`messagesID`, `from`, `to`, `content`, `delivery_status`, `date`) VALUES ?', [messageData] ,callback);
+        // }
     ], function (err, results) {
         if (err) {
             console.log('Exception initializing database.');
@@ -91,7 +87,6 @@ function initializeComprehensively(){
         }
     });
 }
-//initializeComprehensively();
 
 module.exports.initializeComprehensively = initializeComprehensively;
 module.exports.client = client;
