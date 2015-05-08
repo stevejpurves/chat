@@ -13,12 +13,12 @@ function start_the_app_and_server() {
 }
 
 module.exports = {
-	app: null,
+	app_instance: null,
 	server_instance: null,
 	start: function(config, done) {
 		var app = express();
-		server_instance = require('http').Server(app);
-		var port = process.env.PORT || 3000;
+		server = require('http').Server(app);
+		var port = process.env.PORT || config.port || 3000;
 
 		// view engine setup
 		app.set('views', path.join(__dirname, 'views'));
@@ -40,13 +40,11 @@ module.exports = {
 		app.use(passport.session());
 		require('./lib/passportFunctions');
 
-		console.log("DIRNAME", __dirname)
-
 		// static files 
 		// app.use(express.static(__dirname + '/../../public'));
 
 		// socket.io functions
-		require('./lib/socketFunctions')(server_instance);
+		require('./lib/socketFunctions')(server);
 
 		// routes (last - just before errors)
 		var routes = require('./routes/index');
@@ -57,12 +55,15 @@ module.exports = {
 		// error handling
 		require('./lib/errorFunctions')(app);
 
-		server_instance.listen(port, function(){
-		    console.log('Server inception on port:', server_instance.address().port);
+		this.server_instance = server
+		this.app_instance = app
+
+		server.listen(port, function(){
+		    console.log('Server inception on port:', server.address().port);
 		    if (done) done()
 		});
 	},
-	stop: function() {
-		if (server_instance) server_instance.close();
+	stop: function(done) {
+		if (this.server_instance) this.server_instance.close(done);
 	}
 }
