@@ -4,8 +4,8 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var passport = require('passport');
 var flash = require('connect-flash');
+var passport = require('passport')
 
 
 function start_the_app_and_server() {
@@ -36,9 +36,11 @@ module.exports = {
 
 		// passport
 		app.use(flash());
+
 		app.use(passport.initialize());
 		app.use(passport.session());
-		require('./lib/passportFunctions');
+		var configurePassport = require('./lib/passportFunctions');
+		configurePassport(passport, config.passport_override)
 
 		// static files 
 		// app.use(express.static(__dirname + '/../../public'));
