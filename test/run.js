@@ -7,7 +7,7 @@ var testDb = require('./dbHelpers')
 describe("Ubersensei Chat Server", function() {
 
 	this.the_app = null
-	this.the_cookie = null
+	this.user_cookies = []
 
 	beforeEach(function(done) {
 		app.start(test_config, function() {
@@ -49,7 +49,7 @@ describe("Ubersensei Chat Server", function() {
 
 	afterEach(function(done) {
 		app.stop(done)
-		the_cookie = null
+		user_cookies = []
 	})
 
 });

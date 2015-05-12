@@ -25,10 +25,10 @@ module.exports = function() {
 					expect(res.headers['location']).to.equal('/')
 					// to assert for the flash message we have to follow the redirect
 					// in the same session
-					the_cookie = res.headers['set-cookie']
+					user_cookies.push(res.headers['set-cookie'])
 					request(the_app)
 						.get('/')
-						.set('Cookie',the_cookie)
+						.set('Cookie', user_cookies[0])
 						.expect(200)
 						.end(function(err,res) {
 							expect(res.text).to.contain('<p class="flashMessage">Unknown user albert</p>')
@@ -39,7 +39,21 @@ module.exports = function() {
 	})
 
 	describe("DB error", function() {
-		it.skip("responds with 404")
+		beforeEach(function(done) {
+			testDb.drop_tables(function(err, result) {
+				expect(err).to.be.falsy
+				done()
+			})
+		})
+
+		it("responds with 500", function(done) {
+			request(the_app)
+				.post('/auth/login')
+				.type('form')
+				.send({username:'albert', password:'1234'})
+				.expect(500)
+				.end(done)
+		})
 	})
 
 	describe("successful sign in", function() {
@@ -60,10 +74,10 @@ module.exports = function() {
 				.end(function(err, res) {
 					if (err) return done(err)
 					expect(res.headers['location']).to.equal('/')
-					the_cookie = res.headers['set-cookie']
+					user_cookies = res.headers['set-cookie']
 					request(the_app)
 						.get('/')
-						.set('Cookie',the_cookie)
+						.set('Cookie',user_cookies[0])
 						.expect(200)
 						.end(function(err,res) {
 							expect(res.text).to.contain('<a href="/auth/profile">My Profile</a>')

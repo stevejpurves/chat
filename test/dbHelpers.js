@@ -2,6 +2,7 @@ var config = require('./config')
 var client = require('../server/lib/db/dbClient')
 var dbInitialize = require('../server/lib/db/dbInitialize')(config.db_name)
 var dbFunctions = require('../server/lib/db/dbFunctions')
+var async = require('async')
 
 // expected format or userdata
 // var userData = [
@@ -38,6 +39,17 @@ dbFunctions.show_databases = function(callback) {
 
 dbFunctions.drop_schema = function(callback) {
 	client.query('DROP SCHEMA `'+config.db_name+'`;', callback)
+}
+
+dbFunctions.drop_tables = function(done) {
+	async.series([
+		function(callback) {
+			client.query('DROP TABLE `messages`;', callback)
+		},
+		function(callback) {
+			client.query('DROP TABLE `users`;', callback)
+		}]
+		, done)
 }
 
 dbFunctions.reinitialize = dbInitialize.initializeComprehensively
