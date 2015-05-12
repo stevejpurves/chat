@@ -7,11 +7,6 @@ var bodyParser = require('body-parser');
 var flash = require('connect-flash');
 var passport = require('passport')
 
-
-function start_the_app_and_server() {
-
-}
-
 module.exports = {
 	app_instance: null,
 	server_instance: null,

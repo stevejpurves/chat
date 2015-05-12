@@ -76,7 +76,7 @@ function updateSocketID(userID, socketID, fn) {
 function insertChatMessage(message, fn) {
     var m = message;
     var deliveryStatus = (m.targetSocketID != null) ? 'seen' : 'delivered';
-    var query = 'INSERT INTO `simpledb`.`messages` (`from`, `to`, `content`, `delivery_status`, `date`) VALUES (?,?,?,?,NOW())';
+    var query = 'INSERT INTO `messages` (`from`, `to`, `content`, `delivery_status`, `date`) VALUES (?,?,?,?,NOW())';
     client.query(query, [m.from, m.to, m.content, deliveryStatus], function(err, rows) {
         if (err) return fn(err);
         return fn(null, null);

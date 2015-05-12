@@ -6,9 +6,10 @@ var db_name = ''
 
 function initializeComprehensively(doneCB){
     async.series([
-        function connect(callback) {
-            client.connect(callback);
-        },
+        // see http://stackoverflow.com/questions/14087924/cannot-enqueue-handshake-after-invoking-quit
+        // function connect(callback) {
+        //     client.connect(callback);
+        // },
         function clear(callback) {
             client.query('DROP SCHEMA IF EXISTS `'+db_name+'`', callback);
         },

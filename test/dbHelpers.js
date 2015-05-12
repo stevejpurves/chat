@@ -1,6 +1,6 @@
-var client = require('../server/lib/db/dbClient')
-var dbFunctions = require('../server/lib/db/dbFunctions')
 var config = require('./config')
+var dbInitialize = require('../server/lib/db/dbInitialize')(config.db_name)
+var dbFunctions = require('../server/lib/db/dbFunctions')
 
 // expected format or userdata
 // var userData = [
@@ -21,8 +21,18 @@ dbFunctions.insert_user = function(userData, callback) {
 //     [5, 3, 1, 'hello from 3 to 1', '', '2015-05-01 12:27:08'],
 //     [6, 3, 2, 'hello from 3 to 2', '', '2015-05-01 12:27:11']
 // ];
-dbFunction.insert_messages = function(messageData, callback) {
+dbFunctions.insert_messages = function(messageData, callback) {
 	client.query('INSERT INTO `'+config.db_name+'`.`messages` (`messagesID`, `from`, `to`, `content`, `delivery_status`, `date`) VALUES ?', [messageData] ,callback);
 }
+
+dbFunctions.show_databases = function(callback) {
+	client.query('SHOW DATABASES;', callback)
+}
+
+dbFunctions.use_db = function(callback) {
+	client.query('USE `'+config.db_name+'`;', callback)
+}
+
+dbFunctions.reinitialize = dbInitialize.initializeComprehensively
 
 module.exports = dbFunctions

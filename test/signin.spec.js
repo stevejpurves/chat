@@ -1,9 +1,16 @@
 var expect = require('chai').expect
+require('./helpers')
+var testDb = require('./dbHelpers')
 
 module.exports = function() {
 
 	describe("bad credentials", function() {
+		before(function(done) {
+			done()
+		})
+
 		it.skip('username is missing', function() {
+
 		});
 	})
 

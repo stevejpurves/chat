@@ -1,7 +1,6 @@
 var express = require('express');
 var router = express.Router();
 var dbFunctions = require('../lib/db/dbFunctions');
-
 /* GET home page. */
 router.get('/', function(req, res) {
     res.render('index', { user: (typeof(req.user) == 'undefined' ? false : req.user), message: req.flash('error') });
