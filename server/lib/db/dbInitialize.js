@@ -64,16 +64,16 @@ function initializeComprehensively(doneCB){
         }
     ], function (err, results) {
         if (err) {
-            console.log('Exception initializing database.');
+            $log('Exception initializing database.');
             throw err;
         } else {
-            console.log('Database initialization complete.');
+            $log('Database initialization complete.');
             if (doneCB) doneCB()
         }
     });
 }
 
-function addDefaultData() {
+function addDefaultData(doneCB) {
     async.series([
         function insert_users(callback) {
             var userData = [
@@ -96,12 +96,13 @@ function addDefaultData() {
         }],
         function(err,results) {
             if (err) {
-                console.log('could not add test data users')
+                $log('could not add test data users')
                 throw err
             }
             else
             {
-                console.log('added default test data')
+                $log('added default test data')
+                doneCB()
             }
         }
     )

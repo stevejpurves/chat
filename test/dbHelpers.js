@@ -1,4 +1,5 @@
 var config = require('./config')
+var client = require('../server/lib/db/dbClient')
 var dbInitialize = require('../server/lib/db/dbInitialize')(config.db_name)
 var dbFunctions = require('../server/lib/db/dbFunctions')
 
@@ -8,8 +9,14 @@ var dbFunctions = require('../server/lib/db/dbFunctions')
 //     [2, 'user2', 'secret'],
 //     [3, 'user3', 'secret']
 // ];
+dbFunctions.select_db = function(callback) {
+	client.query('USE `'+config.db_name+'`;', callback)
+}
+
 dbFunctions.insert_user = function(userData, callback) {
 	client.query('INSERT INTO `'+config.db_name+'`.`users` (`userID`, `username`, `password`) VALUES ?', [userData], callback);
+	// client.query('INSERT INTO `test_simpledb`.`users` (`userID`, `username`, `password`) VALUES ?', [userData], callback);
+
 }
 
 // expected format for messagedata
@@ -29,8 +36,8 @@ dbFunctions.show_databases = function(callback) {
 	client.query('SHOW DATABASES;', callback)
 }
 
-dbFunctions.use_db = function(callback) {
-	client.query('USE `'+config.db_name+'`;', callback)
+dbFunctions.drop_schema = function(callback) {
+	client.query('DROP SCHEMA `'+config.db_name+'`;', callback)
 }
 
 dbFunctions.reinitialize = dbInitialize.initializeComprehensively
