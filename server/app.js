@@ -35,11 +35,11 @@ module.exports = {
 		app.use(require('./lib/session').sessionMiddleware);
 
 		// db
-		var dbInitialize = require('./lib/db/dbInitialize');
-		dbInitialize.initializeComprehensively(function() {
-			dbInitialize.addDataForManualTesting();
-		});
-		
+		var dbInitialize = require('./lib/db/dbInitialize')(config.db_name);
+		if (config.environment == 'dev')
+			dbInitialize.initializeComprehensively(dbInitialize.addDataForManualTesting)			
+		else
+			dbInitialize.initializeComprehensively();
 
 		// passport
 		app.use(flash());
