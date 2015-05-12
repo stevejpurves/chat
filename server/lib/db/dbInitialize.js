@@ -2,7 +2,7 @@ var mysql      = require('mysql');
 var async = require('async');
 var client = require('./dbClient');
 
-function initializeComprehensively(){
+function initializeComprehensively(doneCB){
     async.series([
         function connect(callback) {
             client.connect(callback);
@@ -58,15 +58,15 @@ function initializeComprehensively(){
                     '     ON UPDATE NO ACTION)' +
                     ' ENGINE = InnoDB'
                 , callback);
-        },
-        function insert_users(callback) {
-            var userData = [
-                [1, 'user1', 'secret'],
-                [2, 'user2', 'secret'],
-                [3, 'user3', 'secret']
-            ];
-            client.query('INSERT INTO `simpledb`.`users` (`userID`, `username`, `password`) VALUES ?', [userData], callback);
-        },
+        }//,
+        // function insert_users(callback) {
+        //     var userData = [
+        //         [1, 'user1', 'secret'],
+        //         [2, 'user2', 'secret'],
+        //         [3, 'user3', 'secret']
+        //     ];
+        //     client.query('INSERT INTO `simpledb`.`users` (`userID`, `username`, `password`) VALUES ?', [userData], callback);
+        // },
         // function insert_messages(callback) {
         //     var messageData = [
         //         [1, 1, 2, 'hello from 1 to 2', '', '2015-05-01 12:27:06'],
@@ -84,9 +84,46 @@ function initializeComprehensively(){
             throw err;
         } else {
             console.log('Database initialization complete.');
+            if (doneCB) doneCB()
         }
     });
 }
 
+function addDefaultUsers() {
+    async.series([
+        function insert_users(callback) {
+            var userData = [
+                [1, 'user1', 'secret'],
+                [2, 'user2', 'secret'],
+                [3, 'user3', 'secret']
+            ];
+            client.query('INSERT INTO `simpledb`.`users` (`userID`, `username`, `password`) VALUES ?', [userData], callback);
+        },
+        function insert_messages(callback) {
+            var messageData = [
+                [1, 1, 2, 'hello from 1 to 2', '', '2015-05-01 12:27:06'],
+                [2, 1, 3, 'hello from 1 to 3', '', '2015-05-01 12:27:09'],
+                [3, 2, 1, 'hello from 2 to 1', '', '2015-05-01 12:27:07'],
+                [4, 2, 3, 'hello from 2 to 3', '', '2015-05-01 12:27:10'],
+                [5, 3, 1, 'hello from 3 to 1', '', '2015-05-01 12:27:08'],
+                [6, 3, 2, 'hello from 3 to 2', '', '2015-05-01 12:27:11']
+            ];
+            client.query('INSERT INTO `simpledb`.`messages` (`messagesID`, `from`, `to`, `content`, `delivery_status`, `date`) VALUES ?', [messageData] ,callback);
+        }],
+        function(err,results) {
+            if (err) {
+                console.log('could not add test data users')
+                throw err
+            }
+            else
+            {
+                console.log('added default test data')
+            }
+
+        }
+    )
+}
+
 module.exports.initializeComprehensively = initializeComprehensively;
+module.exports.addDataForManualTesting = addDefaultUsers;
 module.exports.client = client;

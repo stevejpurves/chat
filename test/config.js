@@ -1,6 +1,5 @@
 var dbFunction = require('../server/lib/db/dbFunctions')
 
-
 module.exports = {
 	port:3333,
 	db_host:'localhost',

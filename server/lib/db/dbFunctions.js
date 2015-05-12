@@ -1,8 +1,5 @@
 var client = require('./dbClient');
 
-var dbInitialize = require('./dbInitialize');
-dbInitialize.initializeComprehensively();
-
 // for passport.js
 function findById(id, fn) {
     var query = 'SELECT * FROM users WHERE users.userID = ?';
