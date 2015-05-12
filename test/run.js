@@ -12,13 +12,12 @@ describe("Ubersensei Chat Server", function() {
 	describe("Test Environment", function() {
 		it("an app & server instance", function() {
 			expect(app.app_instance).to.not.be.null
-			// expect(app.server_instance).to.not.be.null
-		})
-
-		it("a failing test", function() {
-			expect(true).to.be.false
+			expect(app.server_instance).to.not.be.null
 		})
 	})
+
+	describe("Sign In", require('./signin.spec.js'));
+	describe("Socket Messaging", require('./socket_messaging.spec.js'));
 
 	after(function(done) {
 		app.stop(done)
