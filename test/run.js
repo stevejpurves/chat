@@ -49,6 +49,7 @@ describe("Ubersensei Chat Server", function() {
 
 	afterEach(function(done) {
 		app.stop(done)
+		the_cookie = null
 	})
 
 });

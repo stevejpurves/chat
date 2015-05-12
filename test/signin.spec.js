@@ -60,7 +60,15 @@ module.exports = function() {
 				.end(function(err, res) {
 					if (err) return done(err)
 					expect(res.headers['location']).to.equal('/')
-					done()
+					the_cookie = res.headers['set-cookie']
+					request(the_app)
+						.get('/')
+						.set('Cookie',the_cookie)
+						.expect(200)
+						.end(function(err,res) {
+							expect(res.text).to.contain('<a href="/auth/profile">My Profile</a>')
+							done()
+						})
 				})
 		})
 
