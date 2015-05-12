@@ -1,16 +1,15 @@
 var config = require('./config')
-var FormData = require('form-data')
+var request = require('supertest')
 
-global.POSTLOGIN = function(username, password, cb) {
-	var form = new FormData()
-	form.append('username', username)
-	form.append('password', password)
-	form.submit({
-			host: 'localhost',
-			path: '/auth/login',
-			port: config.port }, function(err, res) {
-				if (err) return cb(err)
-				res.resume()
-				cb(err, res)
-			})
+module.exports = function(app) {
+
+
+	global.POSTLOGIN = function(username, password)	{
+		// move the request functions in the tests into here to reduce duplication
+	}
+
+
+	return {}
 }
+
+

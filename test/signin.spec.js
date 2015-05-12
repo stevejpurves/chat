@@ -1,10 +1,13 @@
 var expect = require('chai').expect
-require('./helpers')
 var testDb = require('./dbHelpers')
+
+var request = require('supertest')
+var helpers = require('./helpers')
 
 module.exports = function() {
 
 	describe("bad credentials", function() {
+
 		beforeEach(function(done) {
 			testDb.insert_user([[1,'bob','1234']], function(err, result) {
 				done()
@@ -12,27 +15,31 @@ module.exports = function() {
 		})
 
 		it('username is missing', function(done) {
-			// POSTLOGIN('fred','1234', function(err, res) {
-			// 	expect(err).to.be.null
-			// 	expect(res.status).to.equal(200)
-			// 	done(err)
-			// })
-		done()
+			request(the_app)
+				.post('/auth/login')
+				.type('form')
+				.send({username:'albert', password:'1234'})
+				.expect(302)
+				.end(function(err, res) {
+					if (err) return done(err)
+					expect(res.headers['location']).to.equal('/')
+					// to assert for the flash message we have to follow the redirect
+					// in the same session
+					the_cookie = res.headers['set-cookie']
+					request(the_app)
+						.get('/')
+						.set('Cookie',the_cookie)
+						.expect(200)
+						.end(function(err,res) {
+							expect(res.text).to.contain('<p class="flashMessage">Unknown user albert</p>')
+							done()
+						})
+				})
 		})
 	})
 
 	describe("DB error", function() {
-		// beforeEach(function(done) {
-		// 	testDb.insert_user([[1,'bob','abc']], done)
-		// })
-
-		// it('given good credentials, then 404', function(done) {
-		// 	POSTLOGIN('bob', 'abc', function(err,res) {
-		// 		expect(err).to.not.be.null
-		// 		expect(res.status).to.equal(404)
-		// 		done(err)
-		// 	})
-		// })
+		it.skip("responds with 404")
 	})
 
 	describe("successful sign in", function() {
@@ -44,14 +51,17 @@ module.exports = function() {
 			})
 		})
 
-		it("returns 200", function(done) {
-			testDb.findByUsername('albert', function(err, user) {
-				expect(err).to.be.null
-				if (!err) {
-					expect(user.username).to.equal('albert')
-				}	
-				done()
-			})
+		it("redirects to /", function(done) {
+			request(the_app)
+				.post('/auth/login')
+				.type('form')
+				.send({username:'albert',password:'1234'})
+				.expect(302)
+				.end(function(err, res) {
+					if (err) return done(err)
+					expect(res.headers['location']).to.equal('/')
+					done()
+				})
 		})
 
 		it.skip('get message history')

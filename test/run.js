@@ -6,8 +6,15 @@ var testDb = require('./dbHelpers')
 
 describe("Ubersensei Chat Server", function() {
 
+	this.the_app = null
+	this.the_cookie = null
+
 	beforeEach(function(done) {
-		app.start(test_config, done)
+		app.start(test_config, function() {
+			require('./helpers')(app.app_instance)
+			the_app = app.app_instance
+			done()
+		})
 	})
 
 	describe("Test Environment", function() {
@@ -38,7 +45,7 @@ describe("Ubersensei Chat Server", function() {
 	})
 
 	describe("Sign In", require('./signin.spec.js'));
-	// describe("Socket Messaging", require('./socket_messaging.spec.js'));
+	describe("Socket Messaging", require('./socket_messaging.spec.js'));
 
 	afterEach(function(done) {
 		app.stop(done)
