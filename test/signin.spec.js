@@ -15,26 +15,14 @@ module.exports = function() {
 		})
 
 		it('username is missing', function(done) {
-			request(the_app)
-				.post('/auth/login')
-				.type('form')
-				.send({username:'albert', password:'1234'})
-				.expect(302)
-				.end(function(err, res) {
-					if (err) return done(err)
-					expect(res.headers['location']).to.equal('/')
-					// to assert for the flash message we have to follow the redirect
-					// in the same session
-					user_cookies.push(res.headers['set-cookie'])
-					request(the_app)
-						.get('/')
-						.set('Cookie', user_cookies[0])
-						.expect(200)
-						.end(function(err,res) {
-							expect(res.text).to.contain('<p class="flashMessage">Unknown user albert</p>')
-							done()
-						})
-				})
+			LOGIN('albert','1234', function(err, res) {
+				if (err) return done(err)
+				expect(res.headers['location']).to.equal('/')
+				GET_FOR_USER_SESSION('/', 0, function(err,res) {
+						expect(res.text).to.contain('<p class="flashMessage">Unknown user albert</p>')
+						done()
+					})
+			})
 		})
 	})
 
@@ -47,12 +35,8 @@ module.exports = function() {
 		})
 
 		it("responds with 500", function(done) {
-			request(the_app)
-				.post('/auth/login')
-				.type('form')
-				.send({username:'albert', password:'1234'})
+			LOGIN('albert', '1234', done)
 				.expect(500)
-				.end(done)
 		})
 	})
 
@@ -66,28 +50,22 @@ module.exports = function() {
 		})
 
 		it("redirects to /", function(done) {
-			request(the_app)
-				.post('/auth/login')
-				.type('form')
-				.send({username:'albert',password:'1234'})
-				.expect(302)
-				.end(function(err, res) {
-					if (err) return done(err)
-					expect(res.headers['location']).to.equal('/')
-					user_cookies = res.headers['set-cookie']
-					request(the_app)
-						.get('/')
-						.set('Cookie',user_cookies[0])
-						.expect(200)
-						.end(function(err,res) {
-							expect(res.text).to.contain('<a href="/auth/profile">My Profile</a>')
-							done()
-						})
-				})
+			LOGIN('albert','1234', function(err, res) {
+				if (err) return done(err)
+				expect(res.headers['location']).to.equal('/')
+				GET_FOR_USER_SESSION('/', 0, function(err,res) {
+						expect(res.text).to.contain('<a href="/auth/profile">My Profile</a>')
+						done()
+					})
+			})
 		})
 
+		it.skip('clientJS should be loaded')
+
 		it.skip('get message history')
+
 		it.skip('establish socketio connection')
+
 		it.skip('socket id is stored in db')
 	});
 

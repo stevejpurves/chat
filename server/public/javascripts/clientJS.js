@@ -157,13 +157,13 @@ $(document).ready(function() {
             e.preventDefault();
             sendChatMessage();
         });
+        
         $('#chatmessage').keypress(function(e) {
             if(e.which == 13) {
                 e.preventDefault();
                 sendChatMessage();
             }
         });
-
     }
 
 
@@ -199,6 +199,7 @@ $(document).ready(function() {
                 console.log(jqXHR.responseText);
             });
     }
+
     function getOtherUserDetails() {
         $.ajax({
             url: "/getOtherUserDetails",
