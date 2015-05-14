@@ -1,19 +1,44 @@
-module.exports = function(server) {
+module.exports = function(server, config) {
     var dbFunctions = require('./db/dbFunctions');
     var sessionMiddleware = require('./session').sessionMiddleware;
 
     var io = require('socket.io').listen(server);
 
     // Read sessions from within socket.io
-    io.use (function(socket, next){ sessionMiddleware(socket.request, {}, next); });
+    io.use(function(socket, next){ sessionMiddleware(socket.request, {}, next); });
 
     io.on('connection', function(socket) {
 
         // update user's socketID against their own record
-        var userID = socket.request.session.passport.user;
+        console.log("REQUEST QUERY ", socket.request._query)
+        console.log("SERVER CURRENT SESSION ", socket.request.session)
+        console.log("SERVER SESSION STORE ", socket.request.sessionStore)
+        console.log("env", config.environment)
+
+        /*
+            This allows us to test socket.io stuff and workaround the node socket.io client
+            problems with cookie persistence.
+
+            It is mildy secure but a better change would be to improve the whole socket.io
+            approach to authentification using the socket.io 'authorization' middleware
+            for either cookies or tokens
+        */
+        var userID;
+        if (socket.request.session.passport && socket.request.session.passport.user)
+            userID = socket.request.session.passport.user;
+        else if (config.environment === 'test') {
+            userID = parseInt(socket.request._query.user_id)
+        }
+        else
+            throw new Error('Cannot get user ID from session')
+
+        console.log("USER", userID)
+
         dbFunctions.updateSocketID(userID, socket.id, function(err, rows) {
             if(err) {return console.log('error in updating user socketID', err)}
         });
+
+        socket.emit('userID', {'userID':userID})
 
         // tell everyone else that this user is now online
         socket.broadcast.emit('socketID', {'userID': userID, 'socketID': socket.id});

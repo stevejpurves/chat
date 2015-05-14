@@ -22,7 +22,8 @@ module.exports = {
 		app.set('view engine', 'jade');
 
 		//app.use(favicon(__dirname + '/public/favicon.ico'));
-		app.use(logger('dev'));
+		if (config.environment === 'dev')
+			app.use(logger('dev'));
 		app.use(bodyParser.json());
 		app.use(bodyParser.urlencoded({ extended: false }));
 		app.use(cookieParser());
@@ -48,7 +49,7 @@ module.exports = {
 			// app.use(express.static(__dirname + '/../../public'));
 
 			// socket.io functions
-			require('./lib/socketFunctions')(server);
+			require('./lib/socketFunctions')(server, config);
 
 			// routes (last - just before errors)
 			var routes = require('./routes/index');
