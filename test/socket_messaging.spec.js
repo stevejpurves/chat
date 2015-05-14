@@ -16,8 +16,11 @@ module.exports = function() {
 	describe("connecting over socket io", function() {
 
 		beforeEach(function(done) {
+			// use some async.series here
 			testDb.insert_user([[101,'bob','1234']], function(err, result) {
-				done(err)
+				testDb.insert_user([[202, 'alice', '4321']], function(err, result) {
+					done(err)					
+				})
 			})
 		})
 
@@ -46,6 +49,20 @@ module.exports = function() {
 			})
 		})
 
+		it("when a second client connects, the first gets its socketID", function() {
+			var user1, user2;
+			user1 = io.connect(url+'?/user_id=101', options)
+			user1.on('connect', function() {
+				user1.on('socketID', function(data) {
+					expect(data.userID).to.not.be.falsy
+					expect(data.socketID).to.not.be.falsy
+					user1.disconnect()
+					user2.disconnect()
+					done()
+				})
+				user2.connect(url+'?/user_id=202', options)
+			})
+		})
 
 		it.skip("cannot create connection without a login", function(done) {
 			/*

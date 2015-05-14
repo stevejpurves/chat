@@ -10,10 +10,6 @@ module.exports = function(server, config) {
     io.on('connection', function(socket) {
 
         // update user's socketID against their own record
-        console.log("REQUEST QUERY ", socket.request._query)
-        console.log("SERVER CURRENT SESSION ", socket.request.session)
-        console.log("SERVER SESSION STORE ", socket.request.sessionStore)
-        console.log("env", config.environment)
 
         /*
             This allows us to test socket.io stuff and workaround the node socket.io client
@@ -32,12 +28,11 @@ module.exports = function(server, config) {
         else
             throw new Error('Cannot get user ID from session')
 
-        console.log("USER", userID)
-
         dbFunctions.updateSocketID(userID, socket.id, function(err, rows) {
             if(err) {return console.log('error in updating user socketID', err)}
         });
 
+        // echoing the userID back to the client, mainly for the benefit of the tests
         socket.emit('userID', {'userID':userID})
 
         // tell everyone else that this user is now online
