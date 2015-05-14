@@ -51,7 +51,7 @@ module.exports = function() {
 
 		it("when a second client connects, the first gets its socketID", function(done) {
 			var user1, user2;
-			user1 = io.connect(url+'?/user_id=101', options)
+			user1 = io.connect(url+'/?user_id=101', options)
 			user1.on('connect', function() {
 				user1.on('socketID', function(data) {
 					expect(data.userID).to.not.be.falsy
@@ -60,7 +60,7 @@ module.exports = function() {
 					user2.disconnect()
 					done()
 				})
-				user2.connect(url+'?/user_id=202', options)
+				user2 = io.connect(url+'/?user_id=202', options)
 			})
 		})
 
