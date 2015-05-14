@@ -65,7 +65,7 @@ module.exports = function() {
 			})
 		})
 
-		it("second client can send a message to the first", function(done) {
+		it("first client can send a message to the client", function(done) {
 			var user1, user2;
 
 			user1 = io.connect(url+'/?user_id=101', options)
