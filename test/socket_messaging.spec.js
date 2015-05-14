@@ -64,8 +64,38 @@ module.exports = function() {
 			})
 		})
 
-		it.skip("second client can send a message to the first, function", function() {
+		it("second client can send a message to the first", function(done) {
+			var user1, user2;
 
+			user1 = io.connect(url+'/?user_id=101', options)
+			user1.on('connect', function() {
+				user1.on('socketID', function(data) {
+					expect(data.userID).to.not.be.falsy
+					expect(data.socketID).to.not.be.falsy
+
+			        var message = {};
+			        message.from = 101;
+			        message.to = 202;
+			        message.content = "hello there!";
+			        message.targetSocketID = data.socketID;
+			        message.date = Date.now()
+
+			        user1.emit('chat', message, function (err, cbMessage) {
+			        	if (err) return done(err)
+			        })
+				})
+
+				user2 = io.connect(url+'/?user_id=202', options)
+				user2.on('chat', function(data) {
+
+					expect(data.from).to.equal(101)
+					expect(data.content).to.contain('hello there!')
+
+					user1.disconnect()
+					user2.disconnect()
+					done()
+				})
+			})
 		})
 
 		it.skip("cannot create connection without a login", function(done) {
