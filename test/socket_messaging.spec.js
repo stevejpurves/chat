@@ -3,8 +3,9 @@ var expect = require('chai').expect
 var io = require('socket.io-client')
 var testDb = require('./dbHelpers')
 var helpers = require('./helpers')
+var config = require('./config')
 
-var url = 'http://localhost:3333'
+var url = 'http://localhost:' + config.port
 
 var request = require('superagent')
 
