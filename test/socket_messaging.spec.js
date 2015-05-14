@@ -49,7 +49,7 @@ module.exports = function() {
 			})
 		})
 
-		it("when a second client connects, the first gets its socketID", function() {
+		it("when a second client connects, the first gets its socketID", function(done) {
 			var user1, user2;
 			user1 = io.connect(url+'?/user_id=101', options)
 			user1.on('connect', function() {
@@ -62,6 +62,10 @@ module.exports = function() {
 				})
 				user2.connect(url+'?/user_id=202', options)
 			})
+		})
+
+		it.skip("second client can send a message to the first, function", function() {
+
 		})
 
 		it.skip("cannot create connection without a login", function(done) {
